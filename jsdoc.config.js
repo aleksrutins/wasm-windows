@@ -6,7 +6,7 @@ module.exports = {
       useLongnameInNav: true,
       staticFiles: {
         include: ['./'],
-        includePattern: /.*?\.include-in-jsdoc\..*?/
+        includePattern: /.*?\.include-in-jsdoc\..*?|CNAME/
       }
     }
   }
