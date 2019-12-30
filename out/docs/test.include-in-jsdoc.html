@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <button id="closeWndBtn">Close Window</button>
+  <script type="module">
+    import {JSWindows} from './index.js';
+    let wnd = new (JSWindows.Window(JSWindows.WindowOpenInstantiator))('Testing', '<h1>Hi</h1>');
+    wnd.open();
+    closeWndBtn.addEventListener('click', () => {
+      wnd.close();
+    });
+  </script>
+</body>
+</html>
