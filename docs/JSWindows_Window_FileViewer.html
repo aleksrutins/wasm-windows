@@ -29,7 +29,7 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>FileViewer
-            <sup class="variation">TInst</sup><span class="signature">(title, url)</span><span class="type-signature"></span></h2>
+            <sup class="variation">TInst</sup><span class="signature">(title)</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -42,7 +42,7 @@
     
 
     
-    <h4 class="name" id="FileViewer"><span class="type-signature"></span>new FileViewer<span class="signature">(title, url)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="FileViewer"><span class="type-signature"></span>new FileViewer<span class="signature">(title)</span><span class="type-signature"></span></h4>
     
 
     
@@ -51,7 +51,7 @@
 
 <div class="description">
     A version of Window used to just view files.
-Note: the constructor is an asynchronous function (uses the Fetch API), so you need to use <code>await new (JSWindows.Window(...).FileViewer)(...)</code>
+Note: You need to call <a href="JSWindows_Window_FileViewer.html#load">JSWindows#Window#FileViewer(TInst)#load</a> to actually load a resource
 </div>
 
 
@@ -107,29 +107,6 @@ Note: the constructor is an asynchronous function (uses the Fetch API), so you n
         </tr>
 
     
-
-        <tr>
-            
-                <td class="name"><code>url</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The URL of the resource to view.</td>
-        </tr>
-
-    
     </tbody>
 </table>
 
@@ -167,7 +144,7 @@ Note: the constructor is an asynchronous function (uses the Fetch API), so you n
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line128">line 128</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line130">line 130</a>
     </li></ul></dd>
     
 
@@ -226,6 +203,165 @@ Note: the constructor is an asynchronous function (uses the Fetch API), so you n
     
 
     
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="load"><span class="type-signature"></span>load<span class="signature">(url)</span><span class="type-signature"> &rarr; {Promise.&lt;void>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Loads a resource asynchronously into the window.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>url</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The URL of the resource to show</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line145">line 145</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+    
 
     
 
@@ -240,13 +376,13 @@ Note: the constructor is an asynchronous function (uses the Fetch API), so you n
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="JSWindows.html">JSWindows</a></li><li><a href="WASMWindows.html">WASMWindows</a></li></ul><h3>Classes</h3><ul><li><a href="JSWindows_Window_FileViewer.html">JSWindows#Window#FileViewer(TInst)</a></li><li><a href="JSWindows_Window_.html">JSWindows#Window(TInst)</a></li></ul><h3>Interfaces</h3><ul><li><a href="JSWindows_CloseableWindow.html">JSWindows#CloseableWindow</a></li><li><a href="JSWindows_WindowInstantiator.html">JSWindows#WindowInstantiator</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="JSWindows.html">JSWindows</a></li><li><a href="WASMWindows.html">WASMWindows</a></li></ul><h3>Classes</h3><ul><li><a href="JSWindows_Window_FileViewer.html">JSWindows#Window#FileViewer(TInst)</a></li><li><a href="JSWindows_Window_.html">JSWindows#Window(TInst)</a></li><li><a href="JSWindows_WindowOpenInstantiator.html">JSWindows#WindowOpenInstantiator</a></li></ul><h3>Interfaces</h3><ul><li><a href="JSWindows_CloseableWindow.html">JSWindows#CloseableWindow</a></li><li><a href="JSWindows_WindowInstantiator.html">JSWindows#WindowInstantiator</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Wed Jan 01 2020 14:03:11 GMT+0000 (Coordinated Universal Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Wed Jan 01 2020 15:01:09 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>

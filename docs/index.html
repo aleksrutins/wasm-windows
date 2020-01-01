@@ -43,11 +43,67 @@
 
 
     <section>
-        <article><p><a href="https://gitpod.io/#https://github.com/munchkinhalfling/wasm-windows"><img src="https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod" alt="Gitpod Ready-to-Code"></a></p>
+        <article><script>
+console.log("Welcome to the WASMWindows documentation!");
+</script>
 <h1>wasm-windows</h1>
-<p>A windowing library for JavaScript and WebAssembly</p>
-<h2>Docs</h2>
-<p>See the <a href="https://munchkinhalfling.github.io/wasm-windows">generated JSDoc</a>.</p></article>
+<h2>A windowing library for JavaScript and WASM.</h2>
+<h2><strong>Quickstart</strong></h2>
+<p>First, create a normal HTML file:</p>
+<pre class="prettyprint source lang-html"><code>&lt;!doctype html>
+
+&lt;html>
+  &lt;head>
+    &lt;title>WASMWindows Quickstart&lt;/title>
+  &lt;/head>
+  &lt;body>
+    &lt;script type=&quot;module&quot;>
+      // Our code will go here
+    &lt;/script>
+  &lt;/body>
+&lt;/html>
+</code></pre>
+<p>Notice that there are no <code>&lt;script src=&quot;...&quot;&gt;</code> elements or anything. This is because WASMWindows uses ES6 imports.
+Next, in the module script element, put the following to import the JavaScript version of WASMWindows (the WASM version is not implemented yet):</p>
+<pre class="prettyprint source lang-js"><code>import {JSWindows} from 'https:cdn.jsdelivr.net/npm/wasm-windows';
+</code></pre>
+<p>This will import it from the JSDelivr CDN.
+After that line, put the following to create your first window:</p>
+<pre class="prettyprint source lang-js"><code>let myWnd = new (JSWindows.Window(JSWindows.WindowOpenInstantiator))('Hello', '&lt;h1>Welcome to WASMWindows!&lt;/h1>');
+</code></pre>
+<p>This line will need some explaining. JSWindows uses the <a href="https://npmjs.com/package/typings.js">TypingsJS</a> library for generic classes, so the <code>JSWindows.Window(JSWindows.WindowOpenInstantiator)</code> part is actually quite simple.
+If you look at the <a href="JSWindows_Window.html">docs for Window</a>, you will see that it takes a type parameter TInst. That is where the <code>JSWindows.WindowOpenInstantiator</code> is going. <code>JSWindows.WindowOpenInstantiator</code> is a <a href="JSWindows_WindowInstantiator.html"><code>WindowInstantiator</code></a> that uses <code>window.open</code> to open a window.
+So, basically, what this line does is it creates a window that uses the WindowOpenInstantiator, with title 'Hello' and initial document.body <code>&lt;h1&gt;Welcome to WASMWindows!&lt;/h1&gt;</code>.</p>
+<h3>Showing the window</h3>
+<p>To show the window, simply use this code:</p>
+<pre class="prettyprint source lang-js"><code>myWnd.open();
+</code></pre>
+<p>To close the window when it is open:</p>
+<pre class="prettyprint source lang-js"><code>myWnd.close();
+</code></pre>
+<p>Let's put that into our code.</p>
+<h3>Putting it all together</h3>
+<p>This code will create a window and a button that closes it. Don't worry about the use of global-id-properties. That is now an HTML5 standard, and I'm pretty sure that there will never be an API called closeWndBtn.</p>
+<pre class="prettyprint source lang-html"><code>&lt;!doctype html>
+&lt;html>
+  &lt;head>
+    &lt;title>WASMWindows Tutorial&lt;/title>
+  &lt;/head>
+  &lt;body>
+    &lt;button id=&quot;closeWndBtn&quot;>Close Window&lt;/button>
+    &lt;script>
+      import {JSWindows} from 'https:cdn.jsdelivr.net/npm/wasm-windows';
+      let myWnd = new (JSWindows.Window(JSWindows.WindowOpenInstantiator))('Hello', '&lt;h1>Welcome to WASMWindows!&lt;/h1>');
+      myWnd.open();
+      closeWndBtn.addEventListener('click', () => {
+        myWnd.close();
+      });
+    &lt;/script>
+  &lt;/body>
+&lt;/html>
+</code></pre>
+<h3>Next steps</h3>
+<p>You can look at the <a href="test.include-in-jsdoc.html">HTML file that I use for testing</a>, which uses a <a href="JSWindows_Window_FileViewer.html">FileViewer</a> as well.</p></article>
     </section>
 
 
@@ -58,13 +114,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="JSWindows.html">JSWindows</a></li><li><a href="WASMWindows.html">WASMWindows</a></li></ul><h3>Classes</h3><ul><li><a href="JSWindows_Window_FileViewer.html">JSWindows#Window#FileViewer(TInst)</a></li><li><a href="JSWindows_Window_.html">JSWindows#Window(TInst)</a></li></ul><h3>Interfaces</h3><ul><li><a href="JSWindows_CloseableWindow.html">JSWindows#CloseableWindow</a></li><li><a href="JSWindows_WindowInstantiator.html">JSWindows#WindowInstantiator</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="JSWindows.html">JSWindows</a></li><li><a href="WASMWindows.html">WASMWindows</a></li></ul><h3>Classes</h3><ul><li><a href="JSWindows_Window_FileViewer.html">JSWindows#Window#FileViewer(TInst)</a></li><li><a href="JSWindows_Window_.html">JSWindows#Window(TInst)</a></li><li><a href="JSWindows_WindowOpenInstantiator.html">JSWindows#WindowOpenInstantiator</a></li></ul><h3>Interfaces</h3><ul><li><a href="JSWindows_CloseableWindow.html">JSWindows#CloseableWindow</a></li><li><a href="JSWindows_WindowInstantiator.html">JSWindows#WindowInstantiator</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Wed Jan 01 2020 14:03:11 GMT+0000 (Coordinated Universal Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Wed Jan 01 2020 15:01:09 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>

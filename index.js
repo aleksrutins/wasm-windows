@@ -55,8 +55,9 @@ JSWindows.WindowInstantiator = Object.freeze(class {
   }
 }),
 /**
+ * A [WindowInstantiator]{@link JSWindows#WindowInstantiator} that uses window.open().
  * @class
- * @private
+ * @name JSWindows#WindowOpenInstantiator
  * @implements {WindowInstantiator}
  */
 JSWindows.WindowOpenInstantiator = Object.freeze(class extends JSWindows.WindowInstantiator {
@@ -74,6 +75,7 @@ JSWindows.WindowOpenInstantiator = Object.freeze(class extends JSWindows.WindowI
  * @class
  * @template TInst The type of WindowInstantiator to use.
  * @name JSWindows#Window(TInst)
+ * @param {WindowInstantiator} TInst The type of WindowInstantiator to use (a type that implements WindowInstantiator)
  * @property {string} title
  * @property {string} body
  * @property {Document} document The HTML document in the window.
@@ -127,12 +129,11 @@ JSWindows.Window = Typings.createGenericClass(['TInst'], (tArgs) => class {
 });
 /**
    * A version of Window used to just view files.
-   * Note: the constructor is an asynchronous function (uses the Fetch API), so you need to use <code>await new (JSWindows.Window(...).FileViewer)(...)</code>
+   * Note: You need to call {@link JSWindows#Window#FileViewer(TInst)#load} to actually load a resource
    * @class
    * @name JSWindows#Window#FileViewer(TInst)
    * @extends {Window}
    * @param {string} title The title of the window.
-   * @param {string} url The URL of the resource to view.
    */
 JSWindows.Window.FileViewer = Typings.createGenericClass(["TInst"], (tArgs) => class extends JSWindows.Window(tArgs.TInst) {
     constructor(title) {
@@ -140,6 +141,14 @@ JSWindows.Window.FileViewer = Typings.createGenericClass(["TInst"], (tArgs) => c
 <pre>Loading...</pre>
       `);
     }
+
+    /**
+     * Loads a resource asynchronously into the window.
+     * @function
+     * @name JSWindows#Window#FileViewer(TInst)#load
+     * @returns {Promise<void>}
+     * @param {string} url The URL of the resource to show
+     */
     async load(url) {
       this.body = `
 <pre>${await (await fetch(url)).text()}</pre>
