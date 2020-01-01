@@ -113,6 +113,31 @@ nav
     padding-left: 16px;
 }
 
+@media screen and (max-width: 800px) {
+  nav {
+    float: unset;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-wrap: wrap;
+    border: none;
+  }
+  nav ul {
+    display: inline;
+    text-align: center;
+  }
+  nav ul li {
+    display: inline;
+    margin: 9px;
+  }
+  #main {
+    width: 100%;
+  }
+  html {
+    width: 100%;
+  }
+}
+
 nav ul {
     font-family: 'Lucida Grande', 'Lucida Sans Unicode', arial, sans-serif;
     font-size: 100%;
