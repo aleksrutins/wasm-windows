@@ -73,14 +73,14 @@ JSWindows.WindowOpenInstantiator = Object.freeze(class extends JSWindows.WindowI
  * <code>new (JSWindows.Window(TInst))(title, initBody)</code>
  * @class
  * @template TInst The type of WindowInstantiator to use.
- * @name JSWindows#Window
+ * @name JSWindows#Window(TInst)
  * @property {string} title
  * @property {string} body
  * @property {Document} document The HTML document in the window.
  * @param {string} title The title of the window.
  * @param {string} initBody The initial content of the window.
  */
-JSWindows.Window = Object.freeze(Typings.createGenericClass(['TInst'], (tArgs) => class {
+JSWindows.Window = Typings.createGenericClass(['TInst'], (tArgs) => class {
   constructor(title, initBody = '') {
     if (!('__is' in tArgs.TInst && tArgs.TInst.__is == "WindowInstantiator")) {
       delete this; // Self-Destruct
@@ -124,4 +124,26 @@ JSWindows.Window = Object.freeze(Typings.createGenericClass(['TInst'], (tArgs) =
   close() {
     ('_ref' in this && !this._ref.closed)? this._ref.close() : null;
   }
-}))
+});
+/**
+   * A version of Window used to just view files.
+   * Note: the constructor is an asynchronous function (uses the Fetch API), so you need to use <code>await new (JSWindows.Window(...).FileViewer)(...)</code>
+   * @class
+   * @name JSWindows#Window#FileViewer(TInst)
+   * @extends {Window}
+   * @param {string} title The title of the window.
+   * @param {string} url The URL of the resource to view.
+   */
+JSWindows.Window.FileViewer = Typings.createGenericClass(["TInst"], (tArgs) => class extends JSWindows.Window(tArgs.TInst) {
+    constructor(title) {
+      super(title, `
+<pre>Loading...</pre>
+      `);
+    }
+    async load(url) {
+      this.body = `
+<pre>${await (await fetch(url)).text()}</pre>
+      `;
+    }
+  });
+Object.freeze(JSWindows.Window);

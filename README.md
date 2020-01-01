@@ -2,3 +2,5 @@
 
 # wasm-windows
 A windowing library for JavaScript and WebAssembly
+## Docs
+See the [generated JSDoc](https://munchkinhalfling.github.io/wasm-windows).

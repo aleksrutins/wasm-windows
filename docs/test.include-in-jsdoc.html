@@ -11,9 +11,12 @@
   <script type="module">
     import {JSWindows} from './index.js';
     let wnd = new (JSWindows.Window(JSWindows.WindowOpenInstantiator))('Testing', '<h1>Hi</h1>');
+    let srcWnd = new (JSWindows.Window.FileViewer(JSWindows.WindowOpenInstantiator))('Testing 2');
+    srcWnd.load('https://cdn.jsdelivr.net/npm/wasm-windows');
     wnd.open();
     closeWndBtn.addEventListener('click', () => {
       wnd.close();
+      srcWnd.open();
     });
   </script>
 </body>
