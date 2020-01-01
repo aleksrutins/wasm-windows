@@ -109,7 +109,7 @@ JSWindows.Window = Typings.createGenericClass(['TInst'], (tArgs) => class {
   /**
    * Open the window.
    * @function
-   * @name JSWindows#Window#open
+   * @name JSWindows#Window(TInst)#open
    */
   open() {
     let inst = new tArgs.TInst();
@@ -121,7 +121,7 @@ JSWindows.Window = Typings.createGenericClass(['TInst'], (tArgs) => class {
   /**
    * Close the window.
    * @function
-   * @name JSWindows#Window#close
+   * @name JSWindows#Window(TInst)#close
    */
   close() {
     ('_ref' in this && !this._ref.closed)? this._ref.close() : null;
@@ -132,7 +132,7 @@ JSWindows.Window = Typings.createGenericClass(['TInst'], (tArgs) => class {
    * Note: You need to call {@link JSWindows#Window#FileViewer(TInst)#load} to actually load a resource
    * @class
    * @name JSWindows#Window#FileViewer(TInst)
-   * @extends {Window}
+   * @extends {Window(TInst)}
    * @param {string} title The title of the window.
    */
 JSWindows.Window.FileViewer = Typings.createGenericClass(["TInst"], (tArgs) => class extends JSWindows.Window(tArgs.TInst) {
