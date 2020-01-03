@@ -216,7 +216,7 @@ Object.freeze(JSWindows);
  * @param {Object} webAssemblyOptions the options to pass through to WebAssembly
  * @param {Uint8Array | WebAssembly.Memory} WASMMemory The memory of the current WASM instance (for string-getting)
  */
-WASMWindows.WASMWindowingPlugin = Typings.createGenericClass(['TInst'], tArgs => (obj = {env: {}}, WASMMemory) => class {
+WASMWindows.WASMWindowingPlugin = Typings.createGenericClass(['TInst'], tArgs => (obj = {env: {}}, WASMMemory) => () => {
   let resImports = {
     /**
      * @returns {number}
@@ -233,7 +233,7 @@ WASMWindows.WASMWindowingPlugin = Typings.createGenericClass(['TInst'], tArgs =>
     closeWindow(id) {
       WASMWindows.WASMWindowingPlugin.windowList.get([WASMMemory, tArgs.TInst])[id].close();
     }
-  }
+  };
   let newOpts;
   Object.assign(newOpts, obj);
   Object.assign(newOpts.imports || (newOpts.imports = {}), resImports);
