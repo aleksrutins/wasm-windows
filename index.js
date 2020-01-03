@@ -1,5 +1,53 @@
 
 import * as Typings from 'https:cdn.jsdelivr.net/npm/typings.js';
+// StackOverflow: https://stackoverflow.com/questions/8936984/uint8array-to-string-in-javascript#answer-59187415
+function utf8ArrayToString(aBytes) {
+    var sView = "";
+    
+    for (var nPart, nLen = aBytes.length, nIdx = 0; nIdx < nLen; nIdx++) {
+        nPart = aBytes[nIdx];
+        
+        sView += String.fromCharCode(
+            nPart > 251 && nPart < 254 && nIdx + 5 < nLen ? /* six bytes */
+                /* (nPart - 252 << 30) may be not so safe in ECMAScript! So...: */
+                (nPart - 252) * 1073741824 + (aBytes[++nIdx] - 128 << 24) + (aBytes[++nIdx] - 128 << 18) + (aBytes[++nIdx] - 128 << 12) + (aBytes[++nIdx] - 128 << 6) + aBytes[++nIdx] - 128
+            : nPart > 247 && nPart < 252 && nIdx + 4 < nLen ? /* five bytes */
+                (nPart - 248 << 24) + (aBytes[++nIdx] - 128 << 18) + (aBytes[++nIdx] - 128 << 12) + (aBytes[++nIdx] - 128 << 6) + aBytes[++nIdx] - 128
+            : nPart > 239 && nPart < 248 && nIdx + 3 < nLen ? /* four bytes */
+                (nPart - 240 << 18) + (aBytes[++nIdx] - 128 << 12) + (aBytes[++nIdx] - 128 << 6) + aBytes[++nIdx] - 128
+            : nPart > 223 && nPart < 240 && nIdx + 2 < nLen ? /* three bytes */
+                (nPart - 224 << 12) + (aBytes[++nIdx] - 128 << 6) + aBytes[++nIdx] - 128
+            : nPart > 191 && nPart < 224 && nIdx + 1 < nLen ? /* two bytes */
+                (nPart - 192 << 6) + aBytes[++nIdx] - 128
+            : /* nPart < 127 ? */ /* one byte */
+                nPart
+        );
+    }
+    
+    return sView;
+}
+// My own code
+const PtrUtils = mem => ({
+  stringFromPtr(ptr) {
+    let str = '';
+    let u8arr = new Uint8Array(mem.buffer, ptr, this.strlen(ptr) - 1);
+    let ch = () => u8arr[i];
+    let i = 0;
+    do {
+      str += String.fromCharCode(ch());
+      i++
+    } while(ch != undefined);
+    return str;
+  },
+  strlen(ptr, dataType = "Uint8") {
+    let dataview = new DataView(mem.buffer, ptr);
+    let i = 0;
+    let ch = () => dataview['get' + dataType](i);
+    for(;ch()!=0;i++) {}
+    i++; // Include null terminator
+    return i;
+  }
+});
 export const
   /**
    * @namespace
@@ -156,3 +204,43 @@ JSWindows.Window.FileViewer = Typings.createGenericClass(["TInst"], (tArgs) => c
     }
   });
 Object.freeze(JSWindows.Window);
+Object.freeze(JSWindows);
+
+// WASMWindows //
+/**
+ * A plugin that sends windowing functionality to WASM/C
+ * Usage: <code>await WebAssembly.instantiate(bytes, new (WASMWindows.WASMWindowingPlugin(TypeOfWindowInstantiator))(wasmOptions, memory))</code>
+ * @class
+ * @name WASMWindows#WASMWindowingPlugin(TInst)
+ * @param {WindowInstantiator} TInst the type of WindowInstantiator to use (a type that implements WindowInstantiator)
+ * @param {Object} webAssemblyOptions the options to pass through to WebAssembly
+ * @param {Uint8Array | WebAssembly.Memory} WASMMemory The memory of the current WASM instance (for string-getting)
+ */
+WASMWindows.WASMWindowingPlugin = Typings.createGenericClass(['TInst'], tArgs => (obj = {env: {}}, WASMMemory) => {
+  let resImports = {
+    /**
+     * @returns {number}
+     * @param {number} title
+     * @param {number} body 
+     */
+    createWindow(title, body) {
+      WASMWindows.WASMWindowingPlugin.windowList.has([WASMMemory, tArgs.TInst])? WASMWindows.WASMWindowingPlugin.windowList.get([WASMMemory, tArgs.TInst]).push(new JSWindows.Window(PtrUtils(WASMMemory).stringFromPtr(title), PtrUtils(WASMMemory).stringFromPtr(body))) : WASMWindows.WASMWindowingPlugin.windowList.set([WASMMemory, tArgs.TInst], [new JSWindows.Window(PtrUtils.stringFromPtr(title), PtrUtils.stringFromPtr(body))]);
+      return WASMWindows.WASMWindowingPlugin.windowList.get([WASMMemory, tArgs.TInst]).length - 1; // Index of most recently created window
+    },
+    openWindow(id) {
+      WASMWindows.WASMWindowingPlugin.windowList.get([WASMMemory, tArgs.TInst])[id].open();
+    },
+    closeWindow(id) {
+      WASMWindows.WASMWindowingPlugin.windowList.get([WASMMemory, tArgs.TInst])[id].close();
+    }
+  }
+  let newOpts;
+  Object.assign(newOpts, obj);
+  Object.assign(newOpts.imports || (newOpts.imports = {}), resImports);
+
+});
+/**
+ * @type {Map<Array<any>, Array<JSWindows.Window>>}
+ * @private
+ */
+WASMWindows.WASMWindowingPlugin.windowList = new Map();
