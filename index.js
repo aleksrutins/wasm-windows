@@ -237,7 +237,7 @@ WASMWindows.WASMWindowingPlugin = Typings.createGenericClass(['TInst'], tArgs =>
   let newOpts;
   Object.assign(newOpts, obj);
   Object.assign(newOpts.imports || (newOpts.imports = {}), resImports);
-
+  return newOpts;
 });
 /**
  * @type {Map<Array<any>, Array<JSWindows.Window>>}
