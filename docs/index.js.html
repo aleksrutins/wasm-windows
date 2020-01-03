@@ -28,6 +28,54 @@
         <article>
             <pre class="prettyprint source linenums"><code>
 import * as Typings from 'https:cdn.jsdelivr.net/npm/typings.js';
+// StackOverflow: https://stackoverflow.com/questions/8936984/uint8array-to-string-in-javascript#answer-59187415
+function utf8ArrayToString(aBytes) {
+    var sView = "";
+    
+    for (var nPart, nLen = aBytes.length, nIdx = 0; nIdx &lt; nLen; nIdx++) {
+        nPart = aBytes[nIdx];
+        
+        sView += String.fromCharCode(
+            nPart > 251 &amp;&amp; nPart &lt; 254 &amp;&amp; nIdx + 5 &lt; nLen ? /* six bytes */
+                /* (nPart - 252 &lt;&lt; 30) may be not so safe in ECMAScript! So...: */
+                (nPart - 252) * 1073741824 + (aBytes[++nIdx] - 128 &lt;&lt; 24) + (aBytes[++nIdx] - 128 &lt;&lt; 18) + (aBytes[++nIdx] - 128 &lt;&lt; 12) + (aBytes[++nIdx] - 128 &lt;&lt; 6) + aBytes[++nIdx] - 128
+            : nPart > 247 &amp;&amp; nPart &lt; 252 &amp;&amp; nIdx + 4 &lt; nLen ? /* five bytes */
+                (nPart - 248 &lt;&lt; 24) + (aBytes[++nIdx] - 128 &lt;&lt; 18) + (aBytes[++nIdx] - 128 &lt;&lt; 12) + (aBytes[++nIdx] - 128 &lt;&lt; 6) + aBytes[++nIdx] - 128
+            : nPart > 239 &amp;&amp; nPart &lt; 248 &amp;&amp; nIdx + 3 &lt; nLen ? /* four bytes */
+                (nPart - 240 &lt;&lt; 18) + (aBytes[++nIdx] - 128 &lt;&lt; 12) + (aBytes[++nIdx] - 128 &lt;&lt; 6) + aBytes[++nIdx] - 128
+            : nPart > 223 &amp;&amp; nPart &lt; 240 &amp;&amp; nIdx + 2 &lt; nLen ? /* three bytes */
+                (nPart - 224 &lt;&lt; 12) + (aBytes[++nIdx] - 128 &lt;&lt; 6) + aBytes[++nIdx] - 128
+            : nPart > 191 &amp;&amp; nPart &lt; 224 &amp;&amp; nIdx + 1 &lt; nLen ? /* two bytes */
+                (nPart - 192 &lt;&lt; 6) + aBytes[++nIdx] - 128
+            : /* nPart &lt; 127 ? */ /* one byte */
+                nPart
+        );
+    }
+    
+    return sView;
+}
+// My own code
+const PtrUtils = mem => ({
+  stringFromPtr(ptr) {
+    let str = '';
+    let u8arr = new Uint8Array(mem.buffer, ptr, this.strlen(ptr) - 1);
+    let ch = () => u8arr[i];
+    let i = 0;
+    do {
+      str += String.fromCharCode(ch());
+      i++
+    } while(ch != undefined);
+    return str;
+  },
+  strlen(ptr, dataType = "Uint8") {
+    let dataview = new DataView(mem.buffer, ptr);
+    let i = 0;
+    let ch = () => dataview['get' + dataType](i);
+    for(;ch()!=0;i++) {}
+    i++; // Include null terminator
+    return i;
+  }
+});
 export const
   /**
    * @namespace
@@ -183,7 +231,47 @@ JSWindows.Window.FileViewer = Typings.createGenericClass(["TInst"], (tArgs) => c
       `;
     }
   });
-Object.freeze(JSWindows.Window);</code></pre>
+Object.freeze(JSWindows.Window);
+Object.freeze(JSWindows);
+
+// WASMWindows //
+/**
+ * A plugin that sends windowing functionality to WASM/C
+ * Usage: &lt;code>await WebAssembly.instantiate(bytes, new (WASMWindows.WASMWindowingPlugin(TypeOfWindowInstantiator))(wasmOptions, memory))&lt;/code>
+ * @class
+ * @name WASMWindows#WASMWindowingPlugin(TInst)
+ * @param {WindowInstantiator} TInst the type of WindowInstantiator to use (a type that implements WindowInstantiator)
+ * @param {Object} webAssemblyOptions the options to pass through to WebAssembly
+ * @param {Uint8Array | WebAssembly.Memory} WASMMemory The memory of the current WASM instance (for string-getting)
+ */
+WASMWindows.WASMWindowingPlugin = Typings.createGenericClass(['TInst'], tArgs => (obj = {env: {}}, WASMMemory) => {
+  let resImports = {
+    /**
+     * @returns {number}
+     * @param {number} title
+     * @param {number} body 
+     */
+    createWindow(title, body) {
+      WASMWindows.WASMWindowingPlugin.windowList.has([WASMMemory, tArgs.TInst])? WASMWindows.WASMWindowingPlugin.windowList.get([WASMMemory, tArgs.TInst]).push(new JSWindows.Window(PtrUtils(WASMMemory).stringFromPtr(title), PtrUtils(WASMMemory).stringFromPtr(body))) : WASMWindows.WASMWindowingPlugin.windowList.set([WASMMemory, tArgs.TInst], [new JSWindows.Window(PtrUtils.stringFromPtr(title), PtrUtils.stringFromPtr(body))]);
+      return WASMWindows.WASMWindowingPlugin.windowList.get([WASMMemory, tArgs.TInst]).length - 1; // Index of most recently created window
+    },
+    openWindow(id) {
+      WASMWindows.WASMWindowingPlugin.windowList.get([WASMMemory, tArgs.TInst])[id].open();
+    },
+    closeWindow(id) {
+      WASMWindows.WASMWindowingPlugin.windowList.get([WASMMemory, tArgs.TInst])[id].close();
+    }
+  }
+  let newOpts;
+  Object.assign(newOpts, obj);
+  Object.assign(newOpts.imports || (newOpts.imports = {}), resImports);
+
+});
+/**
+ * @type {Map&lt;Array&lt;any>, Array&lt;JSWindows.Window>>}
+ * @private
+ */
+WASMWindows.WASMWindowingPlugin.windowList = new Map();</code></pre>
         </article>
     </section>
 
@@ -193,13 +281,13 @@ Object.freeze(JSWindows.Window);</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="JSWindows.html">JSWindows</a></li><li><a href="WASMWindows.html">WASMWindows</a></li></ul><h3>Classes</h3><ul><li><a href="JSWindows_Window_FileViewer.html">JSWindows#Window#FileViewer(TInst)</a></li><li><a href="JSWindows_Window.html">JSWindows#Window(TInst)</a></li><li><a href="JSWindows_WindowOpenInstantiator.html">JSWindows#WindowOpenInstantiator</a></li></ul><h3>Interfaces</h3><ul><li><a href="JSWindows_CloseableWindow.html">JSWindows#CloseableWindow</a></li><li><a href="JSWindows_WindowInstantiator.html">JSWindows#WindowInstantiator</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="JSWindows.html">JSWindows</a></li><li><a href="WASMWindows.html">WASMWindows</a></li></ul><h3>Classes</h3><ul><li><a href="JSWindows_Window_FileViewer.html">JSWindows#Window#FileViewer(TInst)</a></li><li><a href="JSWindows_Window.html">JSWindows#Window(TInst)</a></li><li><a href="JSWindows_WindowOpenInstantiator.html">JSWindows#WindowOpenInstantiator</a></li><li><a href="WASMWindows_WASMWindowingPlugin.html">WASMWindows#WASMWindowingPlugin(TInst)</a></li></ul><h3>Interfaces</h3><ul><li><a href="JSWindows_CloseableWindow.html">JSWindows#CloseableWindow</a></li><li><a href="JSWindows_WindowInstantiator.html">JSWindows#WindowInstantiator</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Wed Jan 01 2020 20:36:02 GMT+0000 (Coordinated Universal Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Fri Jan 03 2020 15:02:36 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>
