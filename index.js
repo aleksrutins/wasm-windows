@@ -234,7 +234,7 @@ WASMWindows.WASMWindowingPlugin = Typings.createGenericClass(['TInst'], tArgs =>
       WASMWindows.WASMWindowingPlugin.windowList.get([WASMMemory, tArgs.TInst])[id].close();
     }
   };
-  let newOpts;
+  let newOpts = {};
   Object.assign(newOpts, obj);
   Object.assign(newOpts.env || (newOpts.env = {}), resImports);
   return newOpts;
